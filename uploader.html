@@ -1,0 +1,43 @@
+<style>
+body {
+	background-color: gray;
+	font-family: sans-serif;
+}
+#center {
+top: 50%;
+left: 50%;
+margin: -150px 0 0 -300px;
+width: 600px;
+height: 300px;
+position: absolute;
+z-index: 99;
+
+-webkit-box-sizing: border-box;
+box-sizing: border-box;
+opacity: 1;
+background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 247, 247) 3%, rgb(242, 242, 242) 12%, rgb(217, 217, 217) 90%, rgb(191, 191, 191)); background-attachment: initial; background-origin: initial; background-clip: initial; background-color: initial; -webkit-box-shadow: rgba(0, 0, 0, 0.746094) 0px 1px 52px 1px; border-top-left-radius: 19px 19px; border-top-right-radius: 19px 19px; border-bottom-right-radius: 19px 19px; border-bottom-left-radius: 19px 19px; background-position: initial initial; background-repeat: initial initial; 
+}
+</style>
+<script src="core.js"></script>
+<script>
+	function handle(files){
+		console.log(files);
+		uploadFile(files[0]);
+	}
+</script>
+<div id="center">
+<img src="audio-x-generic.svg" style="width:300px;height:300px;float:left">
+<h1>MusicAlpha</h1>
+<p>
+This is a simple file uploader for <a href="http://music.google.com/">Google Music Beta</a>, cross-platform and powered by HTML5.
+</p>
+<p>
+To begin, select a file.
+</p>
+<p>
+	<input type="file" onchange="handle(this.files)">
+</p>
+<p>
+	<progress id="upload"></progress>
+</p>
+</div>
