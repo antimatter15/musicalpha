@@ -36,6 +36,7 @@ function uploadCover(xt, tags, cb){
 	var fd = new FormData();
 	fd.append("json", '{}');
 	fd.append("albumArt", tags.pictures[0].blob);
+
 	xhr.onload = function(){
 		var json = JSON.parse(xhr.responseText);
 		cb(json.imageUrl);
@@ -95,11 +96,11 @@ function startUpload(file, cb){
 				uploadCover(xt, tags, function(url){
 					albumArtUrl = url;
 				});
-				
 				uploadFile(file, function(file_id){
 					var startTime = +new Date, delta = 1000, end = startTime + delta + 500;
+					var ended = false;
 					(function(){
-						if(+new Date < end){
+						if(+new Date < end && !ended){
 							document.getElementById('upload').value = 0.90 + 0.1 * (+new Date - startTime)/delta;
 							setTimeout(arguments.callee, 100)
 						}
@@ -152,6 +153,7 @@ function startUpload(file, cb){
 						}
 						
 						modifyEntries(xt, metadata, function(){
+							ended = true;
 							document.getElementById('upload').value = 0;
 							document.getElementById('upload').style.display = 'none';
 							cb();
@@ -165,6 +167,8 @@ function startUpload(file, cb){
 
 function uploadFile(file, cb){
 	var file_id = 'antimatter15-'+Math.random().toString(16).substr(2)+'-'+Math.random().toString(16).substr(2);
+	//this file_id is primarily to indulge my narcissism. I guess.
+	
 	console.log('Created file ID', file_id);
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', 'http://uploadsj.clients.google.com/uploadsj/rupio', true);

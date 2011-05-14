@@ -17,6 +17,7 @@ width: 600px;
 height: 300px;
 position: absolute;
 z-index: 99;
+padding-right: 5px;
 
 -webkit-box-sizing: border-box;
 box-sizing: border-box;
@@ -71,6 +72,7 @@ background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 2
 			document.getElementById('overall').style.display = '';
 		}
 		for(var i = 0; i < files.length; i++){
+			if('audio/mpeg,audio/x-mpeg,audio/mp3,audio/x-mp3,audio/mpeg3,audio/x-mpeg3,audio/mpg,audio/x-mpg,audio/x-mpegaudio'.split(',').indexOf(files[i].type) == -1) continue;
 			(function(file){
 				var song = document.createElement('li');
 				var body = document.createElement('p');
@@ -86,21 +88,38 @@ background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 2
 		}
 		console.log(files);
 	
-		function nextQueued(){
-			var item = document.querySelector('.queued');
 
-			if(item){
-				item.className = 'processing';
-				startUpload(item.file, function(){
-					item.className = 'done';
-					nextQueued();
-				});
-			}else{
-				document.getElementById('overall').style.display = 'none';
-			}
-		}
-		nextQueued();
 	}
+
+	function nextQueued(){
+		var item = document.querySelector('.queued');
+
+		if(item){
+			item.className = 'processing';
+			startUpload(item.file, function(){
+				item.className = 'done';
+				nextQueued();
+			});
+		}else{
+			document.getElementById('overall').style.display = 'none';
+			setTimeout(nextQueued, 500);
+		}
+	}
+	setTimeout(nextQueued, 500);
+	
+	
+document.addEventListener("dragenter", function(e){e.preventDefault();e.stopPropagation()}, false);
+document.addEventListener("dragexit", function(e){e.preventDefault();e.stopPropagation()}, false);
+document.addEventListener("dragover", function(e){e.preventDefault();e.stopPropagation()}, false);
+document.addEventListener("drop", function(e){
+	e.preventDefault();
+	e.stopPropagation();
+	var files = e.dataTransfer.files;
+	if(files.length > 0){
+		handle(files);
+	}
+}, false);
+
 </script>
 <div id="center">
 <div id="cont" style="width:300px;height:300px;float:left;background:url(300.png);-webkit-background-size: 300px 300px;margin-right:10px; ">
@@ -114,10 +133,10 @@ background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 2
 
 <h1>Music<span style="color:gray">Alpha</span></h1>
 <p>
-This is a simple file uploader for <a href="http://music.google.com/">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15">@antimatter15</a>.
+This is a simple uploader for <a href="http://music.google.com/">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15">@antimatter15</a>.
 </p>
 <p>
-To begin, select some files.
+To begin, select some files (or drag them here).
 </p>
 <p>
 	<input type="file" onchange="handle(this.files)" multiple>
