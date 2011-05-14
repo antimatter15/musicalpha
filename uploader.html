@@ -18,11 +18,12 @@ opacity: 1;
 background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 247, 247) 3%, rgb(242, 242, 242) 12%, rgb(217, 217, 217) 90%, rgb(191, 191, 191)); background-attachment: initial; background-origin: initial; background-clip: initial; background-color: initial; -webkit-box-shadow: rgba(0, 0, 0, 0.746094) 0px 1px 52px 1px; border-top-left-radius: 19px 19px; border-top-right-radius: 19px 19px; border-bottom-right-radius: 19px 19px; border-bottom-left-radius: 19px 19px; background-position: initial initial; background-repeat: initial initial; 
 }
 </style>
+<script src="id3v2.js"></script>
 <script src="core.js"></script>
 <script>
 	function handle(files){
 		console.log(files);
-		uploadFile(files[0]);
+		startUpload(files[0]);
 	}
 </script>
 <div id="center">
@@ -38,6 +39,7 @@ To begin, select a file.
 	<input type="file" onchange="handle(this.files)">
 </p>
 <p>
-	<progress id="upload"></progress>
+	<progress id="overall" style="width:275px;display:none"></progress>
+	<progress id="upload" style="width:275px;display:none"></progress>
 </p>
 </div>

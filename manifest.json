@@ -3,7 +3,9 @@
   "version": "0.8",
   "description": "Upload songs to Google's Music Beta.",
   "permissions": [
-    "http://uploadsj.clients.google.com/"
+  	"cookies", 
+    "http://uploadsj.clients.google.com/",
+    "http://music.google.com/"
   ],
   "icons": {
     "32": "32.png",

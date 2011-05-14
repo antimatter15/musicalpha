@@ -1,0 +1,11 @@
+So, part of this is done by packet sniffing the windows client using nirsoft's smartsniff, wireshark, Fiddler and Charles.
+
+So, I got the file uploading to work without actually supporting the metadata because it doesnt seem to parse that from ID3 :(
+
+Eventually, I recognized it does a mystery protobuf call to uploadsj.clients.google.com presumably to send metadata and its
+over SSL so I presume it's nigh impossible to intercept and reverse engineer.
+
+So, I guess. Excelsior! Or something. I dont know why I said that, stan lee? Well anyway. I figure there might be another way,
+so here's the current plan, or lack thereof.
+
+
