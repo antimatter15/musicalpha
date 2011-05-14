@@ -1,3 +1,7 @@
+<!doctype html>
+<html>
+<head>
+<title>MusicAlpha</title>
 <style>
 body {
 	background-color: gray;
@@ -19,22 +23,97 @@ box-sizing: border-box;
 opacity: 1;
 background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 247, 247) 3%, rgb(242, 242, 242) 12%, rgb(217, 217, 217) 90%, rgb(191, 191, 191)); background-attachment: initial; background-origin: initial; background-clip: initial; background-color: initial; -webkit-box-shadow: rgba(0, 0, 0, 0.746094) 0px 1px 52px 1px; border-top-left-radius: 19px 19px; border-top-right-radius: 19px 19px; border-bottom-right-radius: 19px 19px; border-bottom-left-radius: 19px 19px; background-position: initial initial; background-repeat: initial initial; 
 }
+
+#queue {
+	color: black;
+	font: italic bold 1em Georgia, Times, serif;
+}
+
+.queued p {
+
+}
+
+.processing p{
+	color: white;
+	text-shadow: black 0 0 3px, black 0 0 10px;
+}
+
+.done p{
+	text-shadow: green 0 0 10px;
+}
+
+#queue li p {
+	font: normal 1em sans-serif;
+	margin:0;
+}
 </style>
+</head>
+<body>
 <script src="id3v2.js"></script>
 <script src="core.js"></script>
 <script>
+				
+
+
+	setInterval(function(){
+		//i was thinking setanimframe but why would i possibly need anywhere near 60fps?
+		var done = document.querySelectorAll('.done').length,
+				partial = Math.min(1, document.getElementById('upload').value || 0),
+				total = document.querySelectorAll('.queued,.processing,.done').length;
+		document.getElementById('overall').value = (done + partial) / total;
+		requestAnimFrame(animloop, element);
+	}, 500);
+
 	function handle(files){
+		document.getElementById('cont').style.background = 'url(faded.png)';
+		document.getElementById('overall').style.display = '';
+		for(var i = 0; i < files.length; i++){
+			(function(file){
+				var song = document.createElement('li');
+				var body = document.createElement('p');
+				ID3v2.parseFile(file, function(tags){
+					body.innerText = tags.Title
+				});
+				body.innerText = file.name;
+				song.className = 'queued';
+				song.file = file;
+				song.appendChild(body);
+				document.getElementById('queue').appendChild(song);
+			})(files[i])
+		}
 		console.log(files);
-		startUpload(files[0]);
+	
+		function nextQueued(){
+			var item = document.querySelector('.queued');
+
+
+			
+			if(item){
+				item.className = 'processing';
+				startUpload(item.file, function(){
+					item.className = 'done';
+					nextQueued();
+				});
+			}else{
+				document.getElementById('overall').style.display = 'none';
+			}
+		}
+		nextQueued();
 	}
 </script>
 <div id="center">
-<div  style="width:300px;height:300px;float:left">
-	<img src="audio-x-generic.svg"  style="width:300px;height:300px;">
+<div id="cont" style="width:300px;height:300px;float:left;background:url(300.png);-webkit-background-size: 300px 300px;margin-right:10px; ">
+	<div style="width:300px;height:300px;overflow:auto">
+		<ol style="padding:20px;padding-left:40px;" id="queue">
+
+						
+		</ol>
+	</div>
 </div>
-<h1>MusicAlpha</h1>
+
+<h1>Music<span style="color:gray">Alpha</span></h1>
 <p>
-This is a simple file uploader for <a href="http://music.google.com/">Google Music Beta</a>.
+This is a simple file uploader for <a href="http://music.google.com/">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15">@antimatter15</a>.
 </p>
 <p>
 To begin, select some files.
@@ -43,8 +122,9 @@ To begin, select some files.
 	<input type="file" onchange="handle(this.files)" multiple>
 </p>
 <p>
-	<progress id="overall" style="width:275px;margin-bottom:10px"></progress>
-	<progress id="upload" style="width:275px"></progress>
+	<progress id="overall" style="width:275px;margin-bottom:10px;display:none"></progress>
+	<progress id="upload" style="width:275px;display:none"></progress>
 </p>
 </div>
-asdfasdf asdf asdfasd fa sdf asdfasdjf asldf ;lkasdjf a;lskfjaskldfj asdlkfj asdklfj asldkfkasdf jasjkldflkjasdfkljasdjk fdjk askljdfksa jdlkf
+</body>
+</html>

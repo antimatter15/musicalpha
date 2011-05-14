@@ -51,9 +51,9 @@ function measureDuration(f, cb){
 		cb(Math.floor(a.duration * 1000)); //milliseconds because well, thats what google uses
 	}, false);
 }
-function startUpload(file){
+function startUpload(file, cb){
 	console.log(file);
-	
+	document.getElementById('upload').style.display = ''
 	var stage = 0, stages = 5;
 	measureDuration(file, function(millis){
 		document.getElementById('upload').value = 0.03;
@@ -62,7 +62,7 @@ function startUpload(file){
 			getXt(function(xt){
 				document.getElementById('upload').value = 0.09;
 				uploadFile(file, function(file_id){
-					var startTime = +new Date, delta = 1500, end = startTime + delta;
+					var startTime = +new Date, delta = 1000, end = startTime + delta + 500;
 					(function(){
 						if(+new Date < end){
 							document.getElementById('upload').value = 0.90 + 0.1 * (+new Date - startTime)/delta;
@@ -82,7 +82,7 @@ function startUpload(file){
 						
 						metadata = {
 							"genre": tags.Genre|| '',
-							"beatsPerMinute":0,
+							"beatsPerMinute":tags.BPM || 0,
 							"albumArtistNorm":"",
 							"album": tags.Album|| '',
 							"artistNorm":"",
@@ -90,16 +90,16 @@ function startUpload(file){
 							"durationMillis": millis,
 							"url":"",
 							"id": file_id,
-							"composer":"",
+							"composer":tags.Composer || "",
 							"creationDate": (+new Date)*1000,
 							"title":tags.Title|| '',
 							"albumArtist":tags.Artist|| '',
-							"playCount":0,
+							"playCount":tags["Play counter"] || 0,
 							"name":tags.Title|| '',
 							"artist":tags.Artist|| '',
 							"titleNorm":"",
 							"rating":0,
-							"comment":"",
+							"comment":tags.Comments,
 							"albumNorm":"",
 							"year":tags.Year || '',
 							"track":tracks,
@@ -108,9 +108,11 @@ function startUpload(file){
 							"totalDiscs":""
 						};
 						modifyEntries(xt, metadata, function(){
-							document.getElementById('upload').value = 1;
+							document.getElementById('upload').value = 0;
+							document.getElementById('upload').style.display = 'none';
+							cb();
 						});
-					}, 1500); //wait a second for google to do magic
+					}, delta); //wait a second for google to do magic
 				})
 			});
 		})
