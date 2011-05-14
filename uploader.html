@@ -1,150 +1,147 @@
 <!doctype html>
 <html>
-<head>
-<title>MusicAlpha</title>
-<style>
-body {
-	background-color: gray;
-	font-family: sans-serif;
-	color:white;
-}
-#center {
-color: black;
-top: 50%;
-left: 50%;
-margin: -150px 0 0 -300px;
-width: 600px;
-height: 300px;
-position: absolute;
-z-index: 99;
-padding-right: 5px;
-
--webkit-box-sizing: border-box;
-box-sizing: border-box;
-opacity: 1;
-background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 247, 247) 3%, rgb(242, 242, 242) 12%, rgb(217, 217, 217) 90%, rgb(191, 191, 191)); background-attachment: initial; background-origin: initial; background-clip: initial; background-color: initial; -webkit-box-shadow: rgba(0, 0, 0, 0.746094) 0px 1px 52px 1px; border-top-left-radius: 19px 19px; border-top-right-radius: 19px 19px; border-bottom-right-radius: 19px 19px; border-bottom-left-radius: 19px 19px; background-position: initial initial; background-repeat: initial initial; 
-}
-
-#queue {
-	color: black;
-	font: italic bold 1em Georgia, Times, serif;
-}
-
-.queued p {
-
-}
-
-.processing p{
-	color: white;
-	text-shadow: black 0 0 3px, black 0 0 10px;
-}
-
-.done p{
-	text-shadow: green 0 0 10px;
-}
-
-#queue li p {
-	font: normal 1em sans-serif;
-	margin:0;
-}
-</style>
-</head>
-<body>
-<script src="id3v2.js"></script>
-<script src="core.js"></script>
-<script>
-				
-
-
-	setInterval(function(){
-		//i was thinking setanimframe but why would i possibly need anywhere near 60fps?
-		var done = document.querySelectorAll('.done').length,
-				partial = Math.min(1, document.getElementById('upload').value || 0),
-				total = document.querySelectorAll('.queued,.processing,.done').length;
-	  if(total > 0){
-			document.getElementById('overall').value = (done + partial) / total;
+	<head>
+		<title>MusicAlpha</title>
+		<style>
+		body {
+			background-color: gray;
+			font-family: sans-serif;
+			color:white;
 		}
-	}, 100);
-
-	function handle(files){
-		document.getElementById('cont').style.background = 'url(faded.png)';
-		if(files.length > 1){
-			document.getElementById('overall').style.display = '';
+		#center {
+			color: black;
+			top: 50%;
+			left: 50%;
+			margin: -150px 0 0 -300px;
+			width: 600px;
+			height: 300px;
+			position: absolute;
+			z-index: 99;
+			padding-right: 5px;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			opacity: 1;
+			background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 247, 247) 3%, rgb(242, 242, 242) 12%, rgb(217, 217, 217) 90%, rgb(191, 191, 191)); 
+			background-attachment: initial; 
+			background-origin: initial; 
+			background-clip: initial; 
+			background-color: initial; 
+			-webkit-box-shadow: rgba(0, 0, 0, 0.746094) 0px 1px 52px 1px; 
+			border-top-left-radius: 19px 19px; 
+			border-top-right-radius: 19px 19px; border-bottom-right-radius: 19px 19px; 
+			border-bottom-left-radius: 19px 19px; 
+			background-position: initial initial; 
+			background-repeat: initial initial; 
 		}
-		for(var i = 0; i < files.length; i++){
-			if('audio/mpeg,audio/x-mpeg,audio/mp3,audio/x-mp3,audio/mpeg3,audio/x-mpeg3,audio/mpg,audio/x-mpg,audio/x-mpegaudio'.split(',').indexOf(files[i].type) == -1) continue;
-			(function(file){
-				var song = document.createElement('li');
-				var body = document.createElement('p');
-				ID3v2.parseFile(file, function(tags){
-					body.innerText = tags.Title || file.name;
-				});
-				body.innerText = file.name;
-				song.className = 'queued';
-				song.file = file;
-				song.appendChild(body);
-				document.getElementById('queue').appendChild(song);
-			})(files[i])
+
+		#queue {
+			color: black;
+			font: italic bold 1em Georgia, Times, serif;
 		}
-		console.log(files);
-	
 
-	}
+		.queued p {
 
-	function nextQueued(){
-		var item = document.querySelector('.queued');
+		}
 
-		if(item){
-			item.className = 'processing';
-			startUpload(item.file, function(){
-				item.className = 'done';
-				nextQueued();
-			});
-		}else{
-			document.getElementById('overall').style.display = 'none';
+		.processing p{
+			color: white;
+			text-shadow: black 0 0 3px, black 0 0 10px;
+		}
+
+		.done p{
+			text-shadow: green 0 0 10px;
+		}
+
+		#queue li p {
+			font: normal 1em sans-serif;
+			margin:0;
+		}
+		</style>
+	</head>
+	<body>
+		<script src="id3v2.js"></script>
+		<script src="core.js"></script>
+		<script>
+			//this updates the overall status continuously, regardless of whether or not its even visible
+			setInterval(function(){
+				//i was thinking setanimframe but why would i possibly need anywhere near 60fps?
+				var done = document.querySelectorAll('.done').length,
+						partial = Math.min(1, document.getElementById('upload').value || 0),
+						total = document.querySelectorAll('.queued,.processing,.done').length;
+				if(total > 0)
+					document.getElementById('overall').value = (done + partial) / total;
+			}, 100);
+			
+			function handle(files){
+				document.getElementById('cont').style.background = 'url(faded.png)'; //to not kill readability
+				if(files.length > 1) document.getElementById('overall').style.display = '';
+				console.log(files);
+				for(var i = 0; i < files.length; i++){
+					//I don't think Google Music supports non-mp3 files
+					if('audio/mpeg,audio/x-mpeg,audio/mp3,audio/x-mp3,audio/mpeg3,audio/x-mpeg3,audio/mpg,audio/x-mpg,audio/x-mpegaudio'.split(',').indexOf(files[i].type) == -1) continue;
+					(function(file){
+						var song = document.createElement('li');
+						var body = document.createElement('p');
+						ID3v2.parseFile(file, function(tags){
+							body.innerText = tags.Title || file.name;
+						});
+						body.innerText = file.name;
+						song.className = 'queued';
+						song.file = file;
+						song.appendChild(body);
+						document.getElementById('queue').appendChild(song);
+					})(files[i])
+				}
+			}
+
+			function nextQueued(){ //this is always polling for new stuff
+				var item = document.querySelector('.queued');
+				if(item){
+					item.className = 'processing';
+					startUpload(item.file, function(){
+						item.className = 'done';
+						nextQueued();
+					});
+				}else{
+					document.getElementById('overall').style.display = 'none';
+					setTimeout(nextQueued, 500);
+				}
+			}
 			setTimeout(nextQueued, 500);
-		}
-	}
-	setTimeout(nextQueued, 500);
-	
-	
-document.addEventListener("dragenter", function(e){e.preventDefault();e.stopPropagation()}, false);
-document.addEventListener("dragexit", function(e){e.preventDefault();e.stopPropagation()}, false);
-document.addEventListener("dragover", function(e){e.preventDefault();e.stopPropagation()}, false);
-document.addEventListener("drop", function(e){
-	e.preventDefault();
-	e.stopPropagation();
-	var files = e.dataTransfer.files;
-	if(files.length > 0){
-		handle(files);
-	}
-}, false);
+			
+			//do html5 drag and drop
+			document.addEventListener("dragenter", function(e){e.preventDefault();e.stopPropagation()}, false);
+			document.addEventListener("dragexit", function(e){e.preventDefault();e.stopPropagation()}, false);
+			document.addEventListener("dragover", function(e){e.preventDefault();e.stopPropagation()}, false);
+			document.addEventListener("drop", function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var files = e.dataTransfer.files;
+				if(files.length > 0) handle(files);
+			}, false);
 
-</script>
-<div id="center">
-<div id="cont" style="width:300px;height:300px;float:left;background:url(300.png);-webkit-background-size: 300px 300px;margin-right:10px; ">
-	<div style="width:300px;height:300px;overflow:auto">
-		<ol style="padding:20px;padding-left:40px;" id="queue">
+		</script>
+		<div id="center">
+			<div id="cont" style="width:300px;height:300px;float:left;background:url(300.png);-webkit-background-size: 300px 300px;margin-right:10px; ">
+				<div style="width:300px;height:300px;overflow:auto">
+					<ol style="padding:20px;padding-left:40px;" id="queue"></ol>
+				</div>
+			</div>
 
-						
-		</ol>
-	</div>
-</div>
-
-<h1>Music<span style="color:gray">Alpha</span></h1>
-<p>
-This is a simple uploader for <a href="http://music.google.com/">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15">@antimatter15</a>.
-</p>
-<p>
-To begin, select some files (or drag them here).
-</p>
-<p>
-	<input type="file" onchange="handle(this.files)" multiple>
-</p>
-<p>
-	<progress id="overall" style="width:275px;margin-bottom:10px;display:none"></progress>
-	<progress id="upload" style="width:275px;display:none"></progress>
-</p>
-</div>
-</body>
+			<h1>Music<span style="color:gray">Alpha</span></h1>
+			<p>
+				This is a simple uploader for <a href="http://music.google.com/">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15">@antimatter15</a>.
+			</p>
+			<p>
+				To begin, select some files (or drag them here).
+			</p>
+			<p>
+				<input type="file" onchange="handle(this.files)" multiple>
+			</p>
+			<p>
+				<progress id="overall" style="width:275px;margin-bottom:10px;display:none"></progress>
+				<progress id="upload" style="width:275px;display:none"></progress>
+			</p>
+		</div>
+	</body>
 </html>

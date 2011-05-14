@@ -2,7 +2,6 @@
 	Be warned, it's pretty hacky and doesn't really separate functionality from UI
 */
 
-
 function getXt(cb){
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", "http://music.google.com/music/listen?u=0", true);
@@ -61,17 +60,18 @@ function modifyEntries(xt, json, cb){
 		]
 	})))
 }
+
 function measureDuration(f, cb){
 	var url;
-  if(window.createObjectURL){
-    url = window.createObjectURL(f)
-  }else if(window.createBlobURL){
-    url = window.createBlobURL(f)
-  }else if(window.URL && window.URL.createObjectURL){
-    url = window.URL.createObjectURL(f)
-  }else if(window.webkitURL && window.webkitURL.createObjectURL){
-    url = window.webkitURL.createObjectURL(f)
-  }
+	if(window.createObjectURL){
+		url = window.createObjectURL(f)
+	}else if(window.createBlobURL){
+		url = window.createBlobURL(f)
+	}else if(window.URL && window.URL.createObjectURL){
+		url = window.URL.createObjectURL(f)
+	}else if(window.webkitURL && window.webkitURL.createObjectURL){
+		url = window.webkitURL.createObjectURL(f)
+	}
 	var a = new Audio(url);
 	a.addEventListener('loadedmetadata', function(){
 		console.log("Measured Duration", a.duration);
@@ -148,9 +148,7 @@ function startUpload(file, cb){
 							"totalDiscs":""
 						};
 						
-						if(albumArtUrl){
-							metadata.albumArtUrl = albumArtUrl;
-						}
+						if(albumArtUrl) metadata.albumArtUrl = albumArtUrl;
 						
 						modifyEntries(xt, metadata, function(){
 							ended = true;
@@ -168,7 +166,6 @@ function startUpload(file, cb){
 function uploadFile(file, cb){
 	var file_id = 'antimatter15-'+Math.random().toString(16).substr(2)+'-'+Math.random().toString(16).substr(2);
 	//this file_id is primarily to indulge my narcissism. I guess.
-	
 	console.log('Created file ID', file_id);
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', 'http://uploadsj.clients.google.com/uploadsj/rupio', true);
@@ -185,84 +182,81 @@ function uploadFile(file, cb){
 			cb(file_id, json);
 		}
 		xhr.upload.addEventListener('progress', function(evt){
-  		document.getElementById('upload').value = (evt.loaded/evt.total) * 0.8 + 0.1;
-	  }, false)
+			document.getElementById('upload').value = (evt.loaded/evt.total) * 0.8 + 0.1;
+		}, false)
 		
 		xhr.setRequestHeader('Content-Type', transfer.content_type);
 		xhr.send(file);
 	}
-	xhr.send(JSON.stringify(
-
-		{
-	"clientId": "Jumper Uploader",
-	"createSessionRequest": {
-		"fields": [
-			{
-				"inlined": {
-					"content": "jumper-uploader-title-18468",
-					"contentType": "text/plain",
-					"name": "title"
+	xhr.send(JSON.stringify({
+		"clientId": "Jumper Uploader",
+		"createSessionRequest": {
+			"fields": [
+				{
+					"inlined": {
+						"content": "jumper-uploader-title-18468",
+						"contentType": "text/plain",
+						"name": "title"
+					}
+				},
+				{
+					"external": {
+						"filename": file.fileName,
+						"name": file.fileName,
+						"put": {},
+						"size": file.fileSize
+					}
+				},
+				{
+					"inlined": {
+						"content": "0",
+						"name": "AlbumArtLength"
+					}
+				},
+				{
+					"inlined": {
+						"content": "0",
+						"name": "AlbumArtStart"
+					}
+				},
+				{
+					"inlined": {
+						"content": Math.random().toString(16).substr(2),
+						"name": "ClientId"
+					}
+				},
+				{
+					"inlined": {
+						"content": "00:11:22:33:44:55",
+						"name": "MachineIdentifier"
+					}
+				},
+				{
+					"inlined": {
+						"content": file_id,
+						"name": "ServerId"
+					}
+				},
+				{
+					"inlined": {
+						"content": "true",
+						"name": "SyncNow"
+					}
+				},
+				{
+					"inlined": {
+						"content": "153",
+						"name": "TrackBitRate"
+					}
+				},
+				{
+					"inlined": {
+						"content": "false",
+						"name": "TrackDoNotRematch"
+					}
 				}
-			},
-			{
-				"external": {
-							"filename": file.fileName,
-							"name": file.fileName,
-							"put": {},
-							"size": file.fileSize
-				}
-			},
-			{
-				"inlined": {
-					"content": "0",
-					"name": "AlbumArtLength"
-				}
-			},
-			{
-				"inlined": {
-					"content": "0",
-					"name": "AlbumArtStart"
-				}
-			},
-			{
-				"inlined": {
-					"content": Math.random().toString(16).substr(2),
-					"name": "ClientId"
-				}
-			},
-			{
-				"inlined": {
-					"content": "00:11:22:33:44:55",
-					"name": "MachineIdentifier"
-				}
-			},
-			{
-				"inlined": {
-					"content": file_id,
-					"name": "ServerId"
-				}
-			},
-			{
-				"inlined": {
-					"content": "true",
-					"name": "SyncNow"
-				}
-			},
-			{
-				"inlined": {
-					"content": "153",
-					"name": "TrackBitRate"
-				}
-			},
-			{
-				"inlined": {
-					"content": "false",
-					"name": "TrackDoNotRematch"
-				}
-			}
-		]
-	},
-	"protocolVersion": "0.8"
-}
-	))
+			]
+		},
+		"protocolVersion": "0.8"
+	}))
 }
