@@ -394,9 +394,18 @@ ID3v2 = {
 		var Description = str.substr(0, DescriptionPos);
 		str = str.substr(DescriptionPos+1);
 		var PictureData = str;
+	  
+	  
+    var arr = new Uint8Array(PictureData.length);
+    for(var i = 0, l = PictureData.length; i < l; i++)
+      arr[i] = PictureData.charCodeAt(i);
+    var bb = new (window.BlobBuilder || window.WebKitBlobBuilder);
+    bb.append(arr.buffer);
+    
 		var Magic = PictureData.split('').map(function(e){return String.fromCharCode(e.charCodeAt(0) & 0xff)}).join('');
 		return {
 			dataURL: 'data:'+MimeType+';base64,'+encode_64(Magic),
+			blob: bb.getBlob(MimeType),
 			PictureType: TextPictureType,
 			Description: Description,
 			MimeType: MimeType

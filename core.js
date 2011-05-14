@@ -6,6 +6,15 @@
 function getXt(cb){
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", "http://music.google.com/music/listen?u=0", true);
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState == 4 && xhr.status == 0){
+			alert("Please login to your Google Music Account before using MusicAlpha");
+			chrome.tabs.create({
+				url: 'https://www.google.com/accounts/ServiceLogin?service=sj&passive=1209600&continue=http://music.google.com/music/listen?u%3D0&followup=http://music.google.com/music/listen?u%3D0'
+			});
+			location.reload();
+		}
+	}
 	xhr.onload = function(){
 		chrome.cookies.get({
 			url: 'http://music.google.com/music', 
@@ -15,6 +24,23 @@ function getXt(cb){
 		})
 	}
 	xhr.send(null);
+}
+
+
+function uploadCover(xt, tags, cb){
+	if(tags.pictures.length == 0) return; //I used to want you dead/but/now I ONLY WANT YOU GONE
+	//if the cb is never called, then there is just the blank default value
+	console.log('Found Album Art!');
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", "http://music.google.com/music/services/imageupload?u=0&xt="+xt+'&zx='+Math.random().toString(36).substr(2), true);
+	var fd = new FormData();
+	fd.append("json", '{}');
+	fd.append("albumArt", tags.pictures[0].blob);
+	xhr.onload = function(){
+		var json = JSON.parse(xhr.responseText);
+		cb(json.imageUrl);
+	}
+	xhr.send(fd);
 }
 
 
@@ -58,9 +84,18 @@ function startUpload(file, cb){
 	measureDuration(file, function(millis){
 		document.getElementById('upload').value = 0.03;
 		ID3v2.parseFile(file, function(tags){
+			console.log('Got ID3 Tags', tags);
 			document.getElementById('upload').value = 0.06;
 			getXt(function(xt){
 				document.getElementById('upload').value = 0.09;
+				//there's a reasonable expectation that uploadFile will take eons more than uploadCover
+				//so a race condition is virtually impossible. But future readers of this code, may
+				//want to proof this from a purely theoretical risk.
+				var albumArtUrl = '';
+				uploadCover(xt, tags, function(url){
+					albumArtUrl = url;
+				});
+				
 				uploadFile(file, function(file_id){
 					var startTime = +new Date, delta = 1000, end = startTime + delta + 500;
 					(function(){
@@ -71,16 +106,20 @@ function startUpload(file, cb){
 					})();
 					setTimeout(function(){
 
-						superxt = xt;
 						var tracks = "", tracktotal = "";
-						if(tags['Track number'].split('/').length == 2){
-							tracks = tags['Track number'].split('/')[0]
-							tracktotal = tags['Track number'].split('/')[1]
-						}else if(/^\d+$/.test(tags['Track number'])){
-							tracks = tags['Track number']
+						
+						tags.Title = tags.Title || file.name; 
+						
+						if(tags['Track number']){
+							if(tags['Track number'].split('/').length == 2){
+								tracks = tags['Track number'].split('/')[0]
+								tracktotal = tags['Track number'].split('/')[1]
+							}else if(/^\d+$/.test(tags['Track number'])){
+								tracks = tags['Track number']
+							}
 						}
 						
-						metadata = {
+						var metadata = {
 							"genre": tags.Genre|| '',
 							"beatsPerMinute":tags.BPM || 0,
 							"albumArtistNorm":"",
@@ -107,6 +146,11 @@ function startUpload(file, cb){
 							"disc":"",
 							"totalDiscs":""
 						};
+						
+						if(albumArtUrl){
+							metadata.albumArtUrl = albumArtUrl;
+						}
+						
 						modifyEntries(xt, metadata, function(){
 							document.getElementById('upload').value = 0;
 							document.getElementById('upload').style.display = 'none';

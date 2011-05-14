@@ -1,7 +1,7 @@
 {
   "name": "MusicAlpha",
   "version": "0.8",
-  "description": "Upload songs to Google's Music Beta.",
+  "description": "Upload songs to Google Music Beta.",
   "permissions": [
   	"cookies", 
     "http://uploadsj.clients.google.com/",

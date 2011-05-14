@@ -60,19 +60,22 @@ background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 2
 		var done = document.querySelectorAll('.done').length,
 				partial = Math.min(1, document.getElementById('upload').value || 0),
 				total = document.querySelectorAll('.queued,.processing,.done').length;
-		document.getElementById('overall').value = (done + partial) / total;
-		requestAnimFrame(animloop, element);
-	}, 500);
+	  if(total > 0){
+			document.getElementById('overall').value = (done + partial) / total;
+		}
+	}, 100);
 
 	function handle(files){
 		document.getElementById('cont').style.background = 'url(faded.png)';
-		document.getElementById('overall').style.display = '';
+		if(files.length > 1){
+			document.getElementById('overall').style.display = '';
+		}
 		for(var i = 0; i < files.length; i++){
 			(function(file){
 				var song = document.createElement('li');
 				var body = document.createElement('p');
 				ID3v2.parseFile(file, function(tags){
-					body.innerText = tags.Title
+					body.innerText = tags.Title || file.name;
 				});
 				body.innerText = file.name;
 				song.className = 'queued';
@@ -86,8 +89,6 @@ background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 2
 		function nextQueued(){
 			var item = document.querySelector('.queued');
 
-
-			
 			if(item){
 				item.className = 'processing';
 				startUpload(item.file, function(){
