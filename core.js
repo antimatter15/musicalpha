@@ -1,3 +1,8 @@
+/*
+	Be warned, it's pretty hacky and doesn't really separate functionality from UI
+*/
+
+
 function getXt(cb){
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", "http://music.google.com/music/listen?u=0", true);
@@ -48,19 +53,24 @@ function measureDuration(f, cb){
 }
 function startUpload(file){
 	console.log(file);
-	document.getElementById('overall').style.display = '';
-	document.getElementById('overall').value = 0;
+	
 	var stage = 0, stages = 5;
 	measureDuration(file, function(millis){
-		document.getElementById('overall').value = (++stage)/stages;
+		document.getElementById('upload').value = 0.03;
 		ID3v2.parseFile(file, function(tags){
-			document.getElementById('overall').value = (++stage)/stages;
+			document.getElementById('upload').value = 0.06;
 			getXt(function(xt){
-				document.getElementById('overall').value = (++stage)/stages;
+				document.getElementById('upload').value = 0.09;
 				uploadFile(file, function(file_id){
-					document.getElementById('overall').value = (++stage)/stages;
+					var startTime = +new Date, delta = 1500, end = startTime + delta;
+					(function(){
+						if(+new Date < end){
+							document.getElementById('upload').value = 0.90 + 0.1 * (+new Date - startTime)/delta;
+							setTimeout(arguments.callee, 100)
+						}
+					})();
 					setTimeout(function(){
-						document.getElementById('overall').value = (++stage)/stages;
+
 						superxt = xt;
 						var tracks = "", tracktotal = "";
 						if(tags['Track number'].split('/').length == 2){
@@ -98,7 +108,7 @@ function startUpload(file){
 							"totalDiscs":""
 						};
 						modifyEntries(xt, metadata, function(){
-							document.getElementById('overall').style.display = 'none';
+							document.getElementById('upload').value = 1;
 						});
 					}, 1500); //wait a second for google to do magic
 				})
@@ -108,8 +118,6 @@ function startUpload(file){
 }
 
 function uploadFile(file, cb){
-	document.getElementById('upload').style.display = '';
-	document.getElementById('upload').value = null;
 	var file_id = 'antimatter15-'+Math.random().toString(16).substr(2)+'-'+Math.random().toString(16).substr(2);
 	console.log('Created file ID', file_id);
 	var xhr = new XMLHttpRequest();
@@ -123,12 +131,11 @@ function uploadFile(file, cb){
 		xhr.onload = function(){ //a callback within a callback! callbackception!
 			console.log("Yay Done Uploading");
 			var json = JSON.parse(xhr.responseText);
-			document.getElementById('upload').style.display = 'none';
 			console.assert(json.sessionStatus.state == "FINALIZED");
 			cb(file_id, json);
 		}
 		xhr.upload.addEventListener('progress', function(evt){
-  		document.getElementById('upload').value = evt.loaded/evt.total;
+  		document.getElementById('upload').value = (evt.loaded/evt.total) * 0.8 + 0.1;
 	  }, false)
 		
 		xhr.setRequestHeader('Content-Type', transfer.content_type);
