@@ -189,9 +189,10 @@ function uploadFile(file, cb){
 		xhr.send(file);
 	}
 	xhr.send(JSON.stringify({
-		"clientId": "Jumper Uploader",
+		//"clientId": "Jumper Uploader",
 		"createSessionRequest": {
 			"fields": [
+			/*
 				{
 					"inlined": {
 						"content": "jumper-uploader-title-18468",
@@ -199,6 +200,7 @@ function uploadFile(file, cb){
 						"name": "title"
 					}
 				},
+				*/
 				{
 					"external": {
 						"filename": file.fileName,
@@ -207,6 +209,7 @@ function uploadFile(file, cb){
 						"size": file.fileSize
 					}
 				},
+				/*
 				{
 					"inlined": {
 						"content": "0",
@@ -230,31 +233,31 @@ function uploadFile(file, cb){
 						"content": "00:11:22:33:44:55",
 						"name": "MachineIdentifier"
 					}
-				},
+				},*/
 				{
 					"inlined": {
 						"content": file_id,
 						"name": "ServerId"
 					}
-				},
+				},{
+					"inlined": {
+						"content": "153", //It won't play without TrackBitRate. Though this is probably not quite the right number.
+						"name": "TrackBitRate"
+					}
+				}/*,
 				{
 					"inlined": {
 						"content": "true",
 						"name": "SyncNow"
 					}
 				},
-				{
-					"inlined": {
-						"content": "153",
-						"name": "TrackBitRate"
-					}
-				},
+				
 				{
 					"inlined": {
 						"content": "false",
 						"name": "TrackDoNotRematch"
 					}
-				}
+				}*/
 			]
 		},
 		"protocolVersion": "0.8"
