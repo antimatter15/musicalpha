@@ -52,6 +52,12 @@
 			text-shadow: green 0 0 10px;
 		}
 
+
+		.fail p{
+			text-shadow: red 0 0 10px;
+		}
+
+
 		#queue li p {
 			font: normal 1em sans-serif;
 			margin:0;
@@ -63,13 +69,25 @@
 		<script src="core.js"></script>
 		<script>
 			//this updates the overall status continuously, regardless of whether or not its even visible
+			var lastchange = 0;
+			var lastvalue = 0;
+			
 			setInterval(function(){
 				//i was thinking setanimframe but why would i possibly need anywhere near 60fps?
 				var done = document.querySelectorAll('.done').length,
-						partial = Math.min(1, document.getElementById('upload').value || 0),
-						total = document.querySelectorAll('.queued,.processing,.done').length;
-				if(total > 0)
+						partial = Math.min(1, getProgress() || 0),
+						total = document.querySelectorAll('.queued,.processing,.done,.fail').length;
+
+				if(lastvalue != partial || !document.querySelector('.processing')) lastchange = +new Date;
+				if(total > 0){
 					document.getElementById('overall').value = (done + partial) / total;
+					if(+new Date - lastchange > 30 * 1000){ //30 seconds stuck is fairly long
+						//declare it dead.
+						console.warn('declared something dead');
+						document.querySelector('.processing').className = 'fail';
+						nextQueued();
+					}
+				}
 			}, 100);
 			
 			function handle(files){
@@ -130,7 +148,7 @@
 
 			<h1>Music<span style="color:gray">Alpha</span></h1>
 			<p>
-				This is a simple uploader for <a href="http://music.google.com/">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15">@antimatter15</a>.
+				This is a simple uploader for <a href="http://music.google.com/" target="_blank">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15" target="_blank">@antimatter15</a>.
 			</p>
 			<p>
 				To begin, select some files (or drag them here).

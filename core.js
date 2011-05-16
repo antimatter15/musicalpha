@@ -2,6 +2,29 @@
 	Be warned, it's pretty hacky and doesn't really separate functionality from UI
 */
 
+var target = 0;
+var persist = 0.8;
+	
+setInterval(function(){
+	var val = document.getElementById('upload').value;
+	var newval = val * persist + (1-persist) * target;
+	if(Math.abs(newval - target) < 0.01) newval = target;
+	//console.log(val, newval, target);
+	document.getElementById('upload').value = newval;
+}, 50);
+
+function setProgress(num){
+	if(num == 0){
+		document.getElementById('upload').value = 0;
+	}
+	target = num;
+}
+
+function getProgress(){
+	return target;
+}
+
+
 function getXt(cb){
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", "http://music.google.com/music/listen?u=0", true);
@@ -83,12 +106,12 @@ function startUpload(file, cb){
 	document.getElementById('upload').style.display = ''
 	var stage = 0, stages = 5;
 	measureDuration(file, function(millis){
-		document.getElementById('upload').value = 0.03;
+		setProgress(0.03);
 		ID3v2.parseFile(file, function(tags){
 			console.log('Got ID3 Tags', tags);
-			document.getElementById('upload').value = 0.06;
+			setProgress(0.06);
 			getXt(function(xt){
-				document.getElementById('upload').value = 0.09;
+				setProgress(0.09);
 				//there's a reasonable expectation that uploadFile will take eons more than uploadCover
 				//so a race condition is virtually impossible. But future readers of this code, may
 				//want to proof this from a purely theoretical risk.
@@ -101,7 +124,7 @@ function startUpload(file, cb){
 					var ended = false;
 					(function(){
 						if(+new Date < end && !ended){
-							document.getElementById('upload').value = 0.90 + 0.1 * (+new Date - startTime)/delta;
+							setProgress(0.90 + 0.1 * (+new Date - startTime)/delta);
 							setTimeout(arguments.callee, 100)
 						}
 					})();
@@ -152,7 +175,7 @@ function startUpload(file, cb){
 						
 						modifyEntries(xt, metadata, function(){
 							ended = true;
-							document.getElementById('upload').value = 0;
+							setProgress(0);
 							document.getElementById('upload').style.display = 'none';
 							cb();
 						});
@@ -175,32 +198,38 @@ function uploadFile(file, cb){
 		var transfer = json.sessionStatus.externalFieldTransfers[0];
 		var url = transfer.putInfo.url;
 		xhr.open('PUT', url, true);
+		
 		xhr.onload = function(){ //a callback within a callback! callbackception!
 			console.log("Yay Done Uploading");
+			setProgress(0.9);
 			var json = JSON.parse(xhr.responseText);
 			console.assert(json.sessionStatus.state == "FINALIZED");
 			cb(file_id, json);
 		}
 		xhr.upload.addEventListener('progress', function(evt){
-			document.getElementById('upload').value = (evt.loaded/evt.total) * 0.8 + 0.1;
+			setProgress((evt.loaded/evt.total) * 0.7 + 0.1);
 		}, false)
+		xhr.upload.addEventListener('load', function(evt){
+			//document.getElementById('upload').value = (evt.loaded/evt.total) * 0.7 + 0.1;
+			//begin random increment
+			var swait = 10;
+			var update = 100;
+			console.log('Loaded XHR');
+			(function inc(){
+				if(getProgress() < 0.9){
+					setProgress(getProgress() + 0.1/((swait*1000)/update));
+					setTimeout(inc, update);
+				}
+			})();
+		}, false)
+		
 		
 		xhr.setRequestHeader('Content-Type', transfer.content_type);
 		xhr.send(file);
 	}
 	xhr.send(JSON.stringify({
-		//"clientId": "Jumper Uploader",
 		"createSessionRequest": {
 			"fields": [
-			/*
-				{
-					"inlined": {
-						"content": "jumper-uploader-title-18468",
-						"contentType": "text/plain",
-						"name": "title"
-					}
-				},
-				*/
 				{
 					"external": {
 						"filename": file.fileName,
@@ -209,31 +238,7 @@ function uploadFile(file, cb){
 						"size": file.fileSize
 					}
 				},
-				/*
-				{
-					"inlined": {
-						"content": "0",
-						"name": "AlbumArtLength"
-					}
-				},
-				{
-					"inlined": {
-						"content": "0",
-						"name": "AlbumArtStart"
-					}
-				},
-				{
-					"inlined": {
-						"content": Math.random().toString(16).substr(2),
-						"name": "ClientId"
-					}
-				},
-				{
-					"inlined": {
-						"content": "00:11:22:33:44:55",
-						"name": "MachineIdentifier"
-					}
-				},*/
+
 				{
 					"inlined": {
 						"content": file_id,
@@ -244,20 +249,7 @@ function uploadFile(file, cb){
 						"content": "153", //It won't play without TrackBitRate. Though this is probably not quite the right number.
 						"name": "TrackBitRate"
 					}
-				}/*,
-				{
-					"inlined": {
-						"content": "true",
-						"name": "SyncNow"
-					}
-				},
-				
-				{
-					"inlined": {
-						"content": "false",
-						"name": "TrackDoNotRematch"
-					}
-				}*/
+				}
 			]
 		},
 		"protocolVersion": "0.8"
