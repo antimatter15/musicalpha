@@ -635,7 +635,7 @@ parseFile: function(file, onComplete){
 		}
 		setTimeout(arguments.callee, 0);
 	})()
-	reader.readAsBinaryString(fileSlice(file, 0, 128 * 1024));
+	reader.readAsBinaryString(fileSlice(file, 0, 512 * 1024));
 	return [reader, ID3v2.parseStream(read, onComplete)];
 }
 }
