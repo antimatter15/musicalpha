@@ -74,7 +74,7 @@
 			
 			setInterval(function(){
 				//i was thinking setanimframe but why would i possibly need anywhere near 60fps?
-				var done = document.querySelectorAll('.done').length,
+				var done = document.querySelectorAll('.done,.fail').length,
 						partial = Math.min(1, getProgress() || 0),
 						total = document.querySelectorAll('.queued,.processing,.done,.fail').length;
 
