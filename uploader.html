@@ -84,7 +84,7 @@
 				}
 				if(total > 0){
 					document.getElementById('overall').value = (done + partial) / total;
-					if(+new Date - lastchange > 30 * 1000){ //30 seconds stuck is fairly long
+					if(+new Date - lastchange > 60 * 1000){ //60 seconds stuck is fairly long
 						//declare it dead.
 						console.warn('declared something dead');
 						document.querySelector('.processing').className = 'fail';
@@ -118,6 +118,7 @@
 			}
 
 			function nextQueued(){ //this is always polling for new stuff
+				if(document.querySelector('.processing')) return console.warn("Terminated Next Queue - Already Running"); 
 				var item = document.querySelector('.queued');
 				if(item){
 					item.className = 'processing';
