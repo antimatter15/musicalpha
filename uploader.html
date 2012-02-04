@@ -2,170 +2,65 @@
 <html>
 	<head>
 		<title>MusicAlpha</title>
+		<link href='http://fonts.googleapis.com/css?family=Syncopate|Quicksand' rel='stylesheet' type='text/css'>
+
 		<style>
-		body {
-			background-color: gray;
-			font-family: sans-serif;
-			color:white;
-		}
-		#center {
-			color: black;
-			top: 50%;
-			left: 50%;
-			margin: -150px 0 0 -300px;
-			width: 600px;
-			height: 300px;
-			position: absolute;
-			z-index: 99;
-			padding-right: 5px;
-			-webkit-box-sizing: border-box;
-			box-sizing: border-box;
-			opacity: 1;
-			background-image: -webkit-linear-gradient(273deg, rgb(252, 252, 252), rgb(247, 247, 247) 3%, rgb(242, 242, 242) 12%, rgb(217, 217, 217) 90%, rgb(191, 191, 191)); 
-			background-attachment: initial; 
-			background-origin: initial; 
-			background-clip: initial; 
-			background-color: initial; 
-			-webkit-box-shadow: rgba(0, 0, 0, 0.746094) 0px 1px 52px 1px; 
-			border-top-left-radius: 19px 19px; 
-			border-top-right-radius: 19px 19px; border-bottom-right-radius: 19px 19px; 
-			border-bottom-left-radius: 19px 19px; 
-			background-position: initial initial; 
-			background-repeat: initial initial; 
-		}
-
-		#queue {
-			color: black;
-			font: italic bold 1em Georgia, Times, serif;
-		}
-
-		.queued p {
-
-		}
-
-		.processing p{
-			color: white;
-			text-shadow: black 0 0 3px, black 0 0 10px;
-		}
-
-		.done p{
-			text-shadow: green 0 0 10px;
-		}
-
-
-		.fail p{
-			text-shadow: red 0 0 10px;
-		}
-
-
-		#queue li p {
-			font: normal 1em sans-serif;
-			margin:0;
-		}
+			#center {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin: -150px 0 0 -120px;
+				width: 500px;
+				height: 300px;
+				box-shadow: 0px 0px 20px gray;
+				background-color: #fff;
+			}
+			body {
+				background-color: #eee;
+				font-family: 'Quicksand', sans-serif;
+				font-size: large;
+			}
+			#logo {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin: -150px 0 0 -450px;
+			}
+			#inner {
+				padding: 30px;
+			}
+			h1 {
+				margin-top: 0;
+				margin-bottom: 0;
+				font-family: 'Syncopate', sans-serif;
+			}
+			a {
+				text-decoration: none;
+				font-weight: bold;
+				color: black;
+			}
+			input[type=file] {
+				font-size: xx-large;
+				color: white;
+				width: 250px;
+			}
 		</style>
 	</head>
 	<body>
-		<script src="id3v2.js"></script>
-		<script src="core.js"></script>
-		<script>
-			//this updates the overall status continuously, regardless of whether or not its even visible
-			var lastchange = 0;
-			var lastvalue = 0;
-			
-			function update_progress(){
-				//i was thinking setanimframe but why would i possibly need anywhere near 60fps?
-				var done = document.querySelectorAll('.done,.fail').length,
-						partial = Math.min(1, getProgress() || 0),
-						total = document.querySelectorAll('.queued,.processing,.done,.fail').length;
-
-				if(lastvalue != partial || !document.querySelector('.processing')){
-					lastchange = +new Date;
-				  lastvalue = partial;
-				}
-				if(total > 0){
-					document.getElementById('overall').value = (done + partial) / total;
-					if(+new Date - lastchange > 60 * 1000){ //60 seconds stuck is fairly long
-						//declare it dead.
-						console.warn('declared something dead');
-						document.querySelector('.processing').className = 'fail';
-						lastchange = +new Date;
-						nextQueued();
-					}
-				}
-			}
-			setInterval(update_progress, 100);
-			
-			function handle(files){
-				document.getElementById('cont').style.background = 'url(faded.png)'; //to not kill readability
-				if(files.length > 1) document.getElementById('overall').style.display = '';
-				console.log(files);
-				for(var i = 0; i < files.length; i++){
-					//I don't think Google Music supports non-mp3 files
-					if('audio/mpeg,audio/x-mpeg,audio/mp3,audio/x-mp3,audio/mpeg3,audio/x-mpeg3,audio/mpg,audio/x-mpg,audio/x-mpegaudio'.split(',').indexOf(files[i].type) == -1) continue;
-					(function(file){
-						var song = document.createElement('li');
-						var body = document.createElement('p');
-						ID3v2.parseFile(file, function(tags){
-							body.innerText = tags.Title || file.name;
-						});
-						body.innerText = file.name;
-						song.className = 'queued';
-						song.file = file;
-						song.appendChild(body);
-						document.getElementById('queue').appendChild(song);
-					})(files[i])
-				}
-			}
-
-			function nextQueued(){ //this is always polling for new stuff
-				if(document.querySelector('.processing')) return console.warn("Terminated Next Queue - Already Running"); 
-				var item = document.querySelector('.queued');
-				if(item){
-					item.className = 'processing';
-					startUpload(item.file, function(){
-						item.className = 'done';
-						nextQueued();
-					});
-				}else{
-					document.getElementById('overall').style.display = 'none';
-					setTimeout(nextQueued, 500);
-				}
-			}
-			setTimeout(nextQueued, 500);
-			
-			//do html5 drag and drop
-			document.addEventListener("dragenter", function(e){e.preventDefault();e.stopPropagation()}, false);
-			document.addEventListener("dragexit", function(e){e.preventDefault();e.stopPropagation()}, false);
-			document.addEventListener("dragover", function(e){e.preventDefault();e.stopPropagation()}, false);
-			document.addEventListener("drop", function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var files = e.dataTransfer.files;
-				if(files.length > 0) handle(files);
-			}, false);
-
-		</script>
+		<img src="300.png" id="logo">
 		<div id="center">
-			<div id="cont" style="width:300px;height:300px;float:left;background:url(300.png);-webkit-background-size: 300px 300px;margin-right:10px; ">
-				<div style="width:300px;height:300px;overflow:auto">
-					<ol style="padding:20px;padding-left:40px;" id="queue"></ol>
-				</div>
+			<div id="inner">
+				<h1 style="float:right">v<span style="color:gray">2.0</span></h1>
+				<h1>Music<span style="color:gray">Alpha</span></h1>
+				<p>
+					This is a simple uploader for <a href="https://music.google.com/music/listen">Google Music</a> made by <a href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
+				</p>
+				<br><br>
+				<p style="float:right">
+					or <b>drag</b> files here.
+				</p>
+				<input type="file">
 			</div>
-
-			<h1>Music<span style="color:gray">Alpha</span></h1>
-			<p>
-				This is a simple uploader for <a href="http://music.google.com/" target="_blank">Google Music Beta</a>. Made by <a href="http://twitter.com/antimatter15" target="_blank">@antimatter15</a>.
-			</p>
-			<p>
-				To begin, select some files (or drag them here).
-			</p>
-			<p>
-				<input type="file" onchange="handle(this.files)" multiple>
-			</p>
-			<p>
-				<progress id="overall" style="width:275px;margin-bottom:10px;display:none"></progress>
-				<progress id="upload" style="width:275px;display:none"></progress>
-			</p>
 		</div>
 	</body>
 </html>
