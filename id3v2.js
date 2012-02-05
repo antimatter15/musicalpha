@@ -636,7 +636,48 @@ parseFile: function(file, onComplete){
 		setTimeout(arguments.callee, 0);
 	})()
 	reader.readAsBinaryString(fileSlice(file, 0, 512 * 1024));
+
 	return [reader, ID3v2.parseStream(read, onComplete)];
+},
+parseFile2: function(file, onComplete){
+
+	
+
+	var pos = 0, 
+			bits_required = 0, 
+			handle = function(){},
+			buffer = "",
+			maxdata = Infinity;
+		
+	function read(bytes, callback, newmax){
+
+		bits_required = bytes;
+		handle = callback;
+		maxdata = newmax;
+		if(bytes == 0) callback('',[]);
+		if(bits_required > buffer.length){
+			var reader = new FileReader();
+			var bsize = 5 * 1024;
+			reader.onload = function(){
+				buffer = reader.result;
+				pos = 0;
+				var data = buffer.substr(pos, bits_required);
+				var arrdata = data.split('').map(function(e){return e.charCodeAt(0) & 0xff});
+				pos += bits_required;
+				bits_required = 0;
+				callback(data, arrdata);
+			}
+			reader.readAsBinaryString(fileSlice(file, pos, 512 * 1024));
+		}else{
+			var data = buffer.substr(pos, bits_required);
+			var arrdata = data.split('').map(function(e){return e.charCodeAt(0) & 0xff});
+			pos += bits_required;
+			bits_required = 0;
+			callback(data, arrdata);
+		}
+
+	}
+	return ID3v2.parseStream(read, onComplete);
 }
 }
 

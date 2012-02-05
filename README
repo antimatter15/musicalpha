@@ -3,3 +3,6 @@ Tis the season of reviving dead projects, and in this case, that dead project is
 Anyway, thanks to the Google-Music-Protocol project (hint, I made it), we now have documentation with regard to the mystical workings of the uploading mechanism. And for that reason, this project can be revived.
 
 But the old interface was frankly atrocious. I mean I thought it was palpable at the time, with its dark grays and noir aesthetic coupled with rounded corners and gradients and bland sans-serifs. I've decided to start afresh, with a new design which takes hints from the original, while presenting a fresh new face to the project.
+
+The first thing which faced the chopping block was the rounded corners. Well, they're still there, but not quite as accentuated. They're much more subtle and look more like rounded corners than squircles.
+

@@ -122,3 +122,26 @@ function revealQueue(){
 	}
 	blah()
 }
+
+
+document.addEventListener("dragenter", function(e){e.preventDefault();e.stopPropagation()}, false);
+document.addEventListener("dragexit", function(e){e.preventDefault();e.stopPropagation()}, false);
+document.addEventListener("dragover", function(e){e.preventDefault();e.stopPropagation()}, false);
+document.addEventListener("drop", function(e){
+	e.preventDefault();
+	e.stopPropagation();
+	var files = e.dataTransfer.files;
+	if(files.length > 0) addFiles(files);
+}, false);
+
+document.getElementById("upload").onchange = function(){
+	var files = document.getElementById("upload").files;
+	if(files.length) addFiles(files);
+}
+
+function addToList(meta){
+	var li = document.createElement('li');
+	document.getElementById('list').appendChild(li);
+	li.innerText = meta.Title;
+	return li;
+}

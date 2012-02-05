@@ -89,13 +89,7 @@
 			<canvas id="polar" width="300" height="300"></canvas>
 			<img src="300.png" id="logo">
 			<div id="queue" style="display:none">
-				<ol>
-					<li>Moogle Doogle Floogle Zoog</li>
-					<li>Moogle Doogle Floogle Zoog</li>
-					<li>Moogle Doogle Floogle Zoog</li>
-					<li>Moogle Doogle Floogle Zoog</li>
-					<li>Moogle Doogle Floogle Zoog</li>
-					<li>Moogle Doogle Floogle Zoog</li>
+				<ol id="list">
 				</ol>
 			</div>
 		</div>
@@ -110,9 +104,13 @@
 				<p style="float:right">
 					or <b>drag</b> files here.
 				</p>
-				<input type="file" multiple>
+				<input type="file" id="upload" multiple>
 			</div>
 		</div>
+		<script src="protobuf.js"></script>
+		<script src="skyjam.proto.js"></script>
+		<script src="id3v2.js"></script>
+		<script src="upload.js"></script>
 		<script src="ui.js"></script>
 	</body>
 </html>
