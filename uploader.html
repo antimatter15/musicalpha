@@ -14,6 +14,7 @@
 				height: 300px;
 				box-shadow: 0px 0px 20px gray;
 				background-color: #fff;
+				border-radius: 10px;
 			}
 			body {
 				background-color: #eee;
@@ -48,6 +49,15 @@
 				height: 300px;
 				overflow-y: auto;
 			}
+			#queue li {
+				color: rgba(0,0,0, 0.3);
+			}
+			#queue li:hover {
+				color: rgba(0,0,0, 0.4);	
+			}
+			#queue li.current {
+				font-weight: bold;
+			}
 			#inner {
 				padding: 30px;
 			}
@@ -79,21 +89,14 @@
 			<canvas id="polar" width="300" height="300"></canvas>
 			<img src="300.png" id="logo">
 			<div id="queue" style="display:none">
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
-				Blah Blah Margle Blargh Dargle Fargh Doogle Moog<br>
+				<ol>
+					<li>Moogle Doogle Floogle Zoog</li>
+					<li>Moogle Doogle Floogle Zoog</li>
+					<li>Moogle Doogle Floogle Zoog</li>
+					<li>Moogle Doogle Floogle Zoog</li>
+					<li>Moogle Doogle Floogle Zoog</li>
+					<li>Moogle Doogle Floogle Zoog</li>
+				</ol>
 			</div>
 		</div>
 		<div id="center">
@@ -101,7 +104,7 @@
 				<h1 style="float:right">v<span style="color:gray">2.0</span></h1>
 				<h1>Music<span style="color:gray">Alpha</span></h1>
 				<p>
-					This is a simple uploader for <a target=_blank href="https://music.google.com/music/listen">Google Music</a> made by <a target=_blank href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a target=_blank href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
+					This is a simple uploader for <a target=_blank href="https://music.google.com/music/listen">Google Music</a> built by <a target=_blank href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a target=_blank href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
 				</p>
 				<br><br>
 				<p style="float:right">

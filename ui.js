@@ -41,10 +41,12 @@ function renderPolar(){
 	//ctx.fillText((p1*100).toFixed(0) + '%', 150 - 10, 150 - 130 + 7)
 	//ctx.fillText('%', 150 - 10, 150)
 	//ctx.fillText((p2*100).toFixed(1), 150, 150)
-	ctx.fillText(polar_p2.diff().toFixed(2)+'?', 150, 150)
+	//ctx.fillText(polar_p2.diff().toFixed(2)+'?', 150, 150)
 
 	//if(current_p1 != polar_p1 || current_p2 != polar_p2){
-	requestAnimFrame(renderPolar);
+	if(!(polar_p1.diff() < 1e-5 && polar_p2.diff() < 1e-5)){
+		requestAnimFrame(renderPolar);
+	}
 	//}
 }
 
@@ -83,9 +85,9 @@ var polar_p1 = new Interpolator(2);
 var polar_p2 = new Interpolator(2)
 
 function updatePolar(p1, p2){
-	//if(current_p1 == polar_p1 && current_p2 == polar_p2){
-	//	requestAnimFrame(renderPolar);
-	//}
+	if(polar_p1.diff() < 1e-5 && polar_p2.diff() < 1e-5){
+		requestAnimFrame(renderPolar);
+	}
 
 	polar_p1.set(p1);
 	polar_p2.set(p2);
@@ -110,7 +112,7 @@ function revealQueue(){
 				polar_state = !polar_state;
 				polar_p2.reset()
 				blah()
-			}, 1000);
+			}, 2000);
 		}else{
 			
 			updatePolar( n/ 20, nmn)

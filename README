@@ -1,11 +1,5 @@
-So, part of this is done by packet sniffing the windows client using nirsoft's smartsniff, wireshark, Fiddler and Charles.
+Tis the season of reviving dead projects, and in this case, that dead project is MusicAlpha. Certainly its utility was far greater when Google Music lacked a Linux client, but Chrome OS users still lack a means of adorning their libraries with precious tunes.
 
-So, I got the file uploading to work without actually supporting the metadata because it doesnt seem to parse that from ID3 :(
+Anyway, thanks to the Google-Music-Protocol project (hint, I made it), we now have documentation with regard to the mystical workings of the uploading mechanism. And for that reason, this project can be revived.
 
-Eventually, I recognized it does a mystery protobuf call to uploadsj.clients.google.com presumably to send metadata and its
-over SSL so I presume it's nigh impossible to intercept and reverse engineer.
-
-So, I guess. Excelsior! Or something. I dont know why I said that, stan lee? Well anyway. I figure there might be another way,
-so here's the current plan, or lack thereof.
-
-
+But the old interface was frankly atrocious. I mean I thought it was palpable at the time, with its dark grays and noir aesthetic coupled with rounded corners and gradients and bland sans-serifs. I've decided to start afresh, with a new design which takes hints from the original, while presenting a fresh new face to the project.
