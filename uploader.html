@@ -20,11 +20,33 @@
 				font-family: 'Quicksand', sans-serif;
 				font-size: large;
 			}
-			#logo {
+			#left {
 				position: absolute;
 				top: 50%;
 				left: 50%;
 				margin: -150px 0 0 -450px;
+				width: 300px;
+				height: 300px;
+			}
+			#logo, #polar, #queue {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			#logo {
+				z-index: -2;
+			}
+			#logo.fade {
+				opacity: 0.1;
+			}
+			#polar {
+				z-index: -1;
+			}
+			#queue {
+				z-index: 1;
+				width: 300px;
+				height: 300px;
+				overflow-y: auto;
 			}
 			#inner {
 				padding: 30px;
@@ -44,16 +66,30 @@
 				color: white;
 				width: 250px;
 			}
+
+			#left ::-webkit-scrollbar{width:9px;height:9px;}
+			#left ::-webkit-scrollbar-button:start:decrement,#left ::-webkit-scrollbar-button:end:increment{display:block;height:0;background-color:transparent;}
+			#left ::-webkit-scrollbar-track-piece{background-color:transparent;-webkit-border-radius:0;-webkit-border-bottom-right-radius:8px;-webkit-border-bottom-left-radius:8px;}
+			#left ::-webkit-scrollbar-thumb:vertical{height:50px;background-color:#bbb;-webkit-border-radius:8px;}
+			#left ::-webkit-scrollbar-thumb:horizontal{width:50px;background-color:#bbb;-webkit-border-radius:8px;}
 		</style>
 	</head>
 	<body>
-		<img src="300.png" id="logo">
+		<div id="left">
+			<canvas id="polar" width="300" height="300"></canvas>
+			<img src="300.png" id="logo">
+			<div id="queue" style="display:none">
+				Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>
+				Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>
+				Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>Blah<br>
+			</div>
+		</div>
 		<div id="center">
 			<div id="inner">
 				<h1 style="float:right">v<span style="color:gray">2.0</span></h1>
 				<h1>Music<span style="color:gray">Alpha</span></h1>
 				<p>
-					This is a simple uploader for <a href="https://music.google.com/music/listen">Google Music</a> made by <a href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
+					This is a simple uploader for <a target=_blank href="https://music.google.com/music/listen">Google Music</a> made by <a target=_blank href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a target=_blank href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
 				</p>
 				<br><br>
 				<p style="float:right">
@@ -62,5 +98,6 @@
 				<input type="file">
 			</div>
 		</div>
+		<script src="ui.js"></script>
 	</body>
 </html>
