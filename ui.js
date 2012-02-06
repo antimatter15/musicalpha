@@ -63,7 +63,10 @@ function Interpolator(degree){
 			inter[0] = n;
 		},
 		diff: function(){
-			return inter[0]	- inter[degree]
+			return Math.abs(inter[0] - inter[degree])
+		},
+		inter: function(){
+			return inter
 		},
 		reset: function(){
 			for(var i = 0; i < degree + 1; i++){

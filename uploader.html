@@ -35,13 +35,14 @@
 				left: 0;
 			}
 			#logo {
-				z-index: -2;
+				z-index: -1;
 			}
 			#logo.fade {
 				opacity: 0.1;
+				z-index: -3;
 			}
 			#polar {
-				z-index: -1;
+				z-index: -2;
 			}
 			#queue {
 				z-index: 1;
@@ -77,6 +78,36 @@
 				width: 250px;
 			}
 
+			#login a {
+				text-decoration: none;
+				font-weight: normal;
+				
+			}
+
+			#login {
+				background-color: #EBD0A2;
+				padding: 10px;
+				border-radius: 5px;
+			}
+
+			#message {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin: -190px 0 0 -75px;
+				width: 400px;
+				height: 300px;
+				box-shadow: 0px 0px 20px gray;
+				background-color: #EBD0A2;
+				border-radius: 10px;
+				padding: 10px;
+			}
+
+			#message a {
+				text-decoration: none;
+				font-weight: normal;
+			}
+
 			#left ::-webkit-scrollbar{width:9px;height:9px;}
 			#left ::-webkit-scrollbar-button:start:decrement,#left ::-webkit-scrollbar-button:end:increment{display:block;height:0;background-color:transparent;}
 			#left ::-webkit-scrollbar-track-piece{background-color:transparent;-webkit-border-radius:0;-webkit-border-bottom-right-radius:8px;-webkit-border-bottom-left-radius:8px;}
@@ -85,6 +116,9 @@
 		</style>
 	</head>
 	<body>
+		<div id="message" style="display:none">
+			<a href="https://accounts.google.com/ServiceLogin?service=sj">Click here to <b>Login</b> to <b>Google Music</b> first</a>
+		</div>
 		<div id="left">
 			<canvas id="polar" width="300" height="300"></canvas>
 			<img src="300.png" id="logo">
@@ -101,15 +135,21 @@
 					This is a simple uploader for <a target=_blank href="https://music.google.com/music/listen">Google Music</a> built by <a target=_blank href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a target=_blank href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
 				</p>
 				<br><br>
-				<p style="float:right">
-					or <b>drag</b> files here.
-				</p>
-				<input type="file" id="upload" multiple>
+				<div id="uploader" style='display:none'>
+					<p style="float:right">
+						or <b>drag</b> files here.
+					</p>
+					<input type="file" id="upload" webkitdirectory multiple>
+				</div>
+				<div id="login" style='display:none'>
+					<a href="https://accounts.google.com/ServiceLogin?service=sj&continue=http://music.google.com/music/listen" target=_blank>Click here to <b>Login</b> to <b>Google Music</b> first</a>
+				</div>
 			</div>
 		</div>
 		<script src="protobuf.js"></script>
 		<script src="skyjam.proto.js"></script>
 		<script src="id3v2.js"></script>
+		<script src="sha1.js"></script>
 		<script src="upload.js"></script>
 		<script src="ui.js"></script>
 	</body>
