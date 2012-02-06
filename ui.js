@@ -25,7 +25,11 @@ function renderPolar(){
 
 	ctx.beginPath()
 	//invert polar state every revolution!
-	ctx.arc(150, 150, 80, Math.PI * (-.5), Math.PI * (-.5 - 2 * p2) , !!polar_state);
+	if(!polar_state && p2 == 0){
+		ctx.arc(150, 150, 80, 0, Math.PI * 2, true);
+	}else{
+		ctx.arc(150, 150, 80, Math.PI * (-.5), Math.PI * (-.5 - 2 * p2) , !!polar_state);
+	}
 	ctx.strokeStyle = "#ccc"
 	ctx.lineWidth = 15;
 	ctx.stroke()
@@ -123,7 +127,7 @@ function revealQueue(){
 		}
 		
 	}
-	blah()
+	//blah()
 }
 
 
