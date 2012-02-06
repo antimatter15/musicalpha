@@ -88,7 +88,7 @@ function updateProgress(current){
 
 function protopost(path, proto, resp, callback){
 	var xhr = new XMLHttpRequest();
-	xhr.open('POST', 'http://localhost:8080/'+path);
+	xhr.open('POST', 'https://music-alpha.appspot.com/'+path);
 	xhr.responseType = 'arraybuffer'
 	xhr.setRequestHeader('X-Cookie', 'SID='+SID);
 	//console.log(proto.SerializeToArray())
