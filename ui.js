@@ -186,3 +186,11 @@ onkeydown = function(e){
 		//document.getElementById('upload').style.display = 'none'
 	}
 }
+
+onkeyup = function(e){
+	if(e.keyCode == 16){
+		document.getElementById("upload").webkitdirectory = false;
+		//document.getElementById('folders').style.display = '';
+		//document.getElementById('upload').style.display = 'none'
+	}
+}

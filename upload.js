@@ -127,6 +127,8 @@ function Metadata(file){
 	var id = Math.random().toString(36).slice(2);
 	track.clientId = id;
 	var meta = file.meta;
+	meta.clientId = id;
+
 	track.fileSize = file.fileSize;
 	track.bitrate = 192; //TODO: actually know this
 	track.durationMilliseconds = meta.durationMilliseconds;
@@ -135,12 +137,15 @@ function Metadata(file){
 	track.genre = meta.Genre;
 	track.year = parseInt(meta.Year);
 	track.title = meta.Title;
-	/*
-	track.track 
-	track.totalTracks
-	track.discnumber
-	track.totalDiscs
-	*/
+	track.composer = meta.Composer;
+	var tr = (meta['Track number']||'').split('/');
+	track.track = parseInt(tr[0], 10);
+	track.totalTracks = parseInt(tr[1], 10)
+	var ds = (meta['Part of a set']||'').split('/')
+	track.discnumber = parseInt(ds[0], 10);
+	track.totalDiscs = parseInt(ds[1], 10);
+	
+	console.log(file);
 	protopost('metadata?version=1', metadata, new SkyJam.MetadataResponse(), function(e){
 		var uploads = e.response.uploads;
 		updateProgress(0.05);
@@ -148,7 +153,7 @@ function Metadata(file){
 		//sure it's useless, but whatever, mabye it'll get better one day
 		for(var i = 0; i < uploads.length; i++){
 			var upload = uploads[i];
-			file.meta.clientId = upload.clientId;
+			//file.meta.clientId = upload.clientId;
 			file.meta.serverId = upload.serverId;
 		}
 
