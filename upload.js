@@ -64,18 +64,20 @@ function processUploadQueue(){
 	if(!file) return;
 	var meta = file.meta;
 	meta.html.className = 'current';
+	if(meta.html.scrollIntoViewIfNeeded){
+		meta.html.scrollIntoViewIfNeeded()
+	}
 	Metadata(file);
 }
 function finalizeUpload(file){
-	file.meta.html.className = 'finished';
-
 	updateProgress(1);
-
+	
 	setTimeout(function(){
-		uploadedTracks++;
 		polar_state = !polar_state;
+		uploadedTracks++;
 		polar_p2.reset();
-		updateProgress(0)
+		renderPolar();
+		file.meta.html.className = 'finished';
 		processUploadQueue()
 	}, 1000);
 }
@@ -154,7 +156,7 @@ function Metadata(file){
 		}
 
 		BeginUpload(file);
-		console.log(e)
+		//console.log(e)
 
 	})
 }
@@ -206,8 +208,8 @@ function BeginUpload(file){
 		xhr.onload = function(){
 			var json = JSON.parse(xhr.responseText);
 			if(json.errorMessage){
-				setTimeout(tryUpload, 1000)
-				updateProgress(attempts/15 * 0.20 + 0.05)
+				setTimeout(tryUpload, 500)
+				updateProgress(Math.min(1, attempts/7) * 0.10 + 0.05)
 			}else{
 				var upload = json.sessionStatus.externalFieldTransfers[0];
 				updateProgress(0.25);
@@ -218,6 +220,7 @@ function BeginUpload(file){
 	tryUpload();
 }
 
+//6679,7588,6668,6595,7364,6201,6600,5646,7805,8799,6142
 
 function UploadFile(file, params){
 	var xhr = new XMLHttpRequest();
@@ -225,21 +228,24 @@ function UploadFile(file, params){
 	xhr.setRequestHeader('Content-Type', params.content_type);
 	xhr.upload.addEventListener('progress', function(evt){
 		var up = (evt.loaded/evt.total);
-		updateProgress(0.25 + up * 0.65);
+		updateProgress(0.15 + up * 0.60);
 	}, false);
+	var uploaded = 0;
 	xhr.upload.addEventListener('load', function(evt){
-		var n = 5, c = 0;
+		var n = 0.01, c = 0;
+		uploaded = +new Date;
 		function update(){
-			if(xhr.readyState != 4){
-				c += 1/(n++);
-				updateProgress(0.90 + 0.05 * c / 2);
-				setTimeout(update, 500)
+			c += (n+=0.02);
+			if(xhr.readyState != 4 && c < 1){
+				updateProgress(0.75 + 0.24 * c);
+				setTimeout(update, 800)
 			}
 		}
 		update();
 	}, false);	
 	xhr.onload = function(){
 		updateProgress(1);
+		//console.log(new Date - uploaded)
 		var json = JSON.parse(xhr.responseText);
 		finalizeUpload(file);
 	}
