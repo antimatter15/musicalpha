@@ -102,8 +102,12 @@ function updatePolar(p1, p2){
 
 
 function revealQueue(){
-	document.getElementById("logo").className = 'fade';
-	document.getElementById("queue").style.display = '';
+	if(document.getElementById("logo").className != 'fade'){
+		document.getElementById("logo").className = 'fade';
+		document.getElementById("queue").style.display = '';
+		updatePolar(0.0001,0.0001);
+	}
+	/*
 	var n = 0;
 	updatePolar(0.0001,0.0001);
 	function blah(){
@@ -126,7 +130,7 @@ function revealQueue(){
 			setTimeout(blah, Math.random() * 1000)
 		}
 		
-	}
+	}*/
 	//blah()
 }
 
@@ -144,11 +148,41 @@ document.addEventListener("drop", function(e){
 document.getElementById("upload").onchange = function(){
 	var files = document.getElementById("upload").files;
 	if(files.length) addFiles(files);
+	document.getElementById("upload").webkitdirectory = false;
+
 }
+
+//document.getElementById('folders').onclick = function(){
+//	document.getElementById("upload").webkitdirectory = true;
+//	document.getElementById("upload").focus()
+//}
 
 function addToList(meta){
 	var li = document.createElement('li');
 	document.getElementById('list').appendChild(li);
 	li.innerText = meta.Title;
 	return li;
+}
+
+var carousel_direction = 0;
+setInterval(function(){
+	var n = 0;
+	carousel_direction = !carousel_direction;
+	function animate(){
+		if(n < 1){
+			n += 0.02;
+			var v = carousel_direction ? n : (1 - n);
+			document.getElementById('carousel').scrollLeft = 220 * v;
+			setTimeout(animate, 10)	
+		}
+	}
+	animate();
+}, 1000 * 10)
+
+onkeydown = function(e){
+	if(e.keyCode == 16){
+		document.getElementById("upload").webkitdirectory = true;
+		//document.getElementById('folders').style.display = '';
+		//document.getElementById('upload').style.display = 'none'
+	}
 }

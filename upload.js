@@ -4,9 +4,6 @@ var totalTracks = 0, uploadedTracks = 0;
 
 function addFiles(files){
 	revealQueue();
-	if(addQueue.length == 0){
-		setTimeout(processAddQueue, 1000)
-	}
 	for(var i = 0; i < files.length; i++){
 		addQueue.push(files[i])
 	};
@@ -36,32 +33,29 @@ function measureDuration(file, callback){
 }
 
 function processAddQueue(){
+	setTimeout(processAddQueue, 1000);
 	var file = addQueue.shift();
-	if(file.name == "."){
-		return processAddQueue();
+	if(!file || file.name == "." || !/\.mp3$/i.test(file.name)){
+		return;
 	}
 	ID3v2.parseFile2(file, function(meta){
 		measureDuration(file, function(e){
 			meta.durationMilliseconds = e;
 			file.meta = meta;
 			meta.html = addToList(meta);
-
+			
 			fileQueue.push(file);
 			totalTracks++;
-
-			if(addQueue.length){
-				setTimeout(processAddQueue, 100);
-			}else{
-				setTimeout(processUploadQueue, 100);
-			}
 		})
 	})
+
 }
 
+processAddQueue();
 
 function processUploadQueue(){
 	var file = fileQueue.shift();
-	if(!file) return;
+	if(!file) return setTimeout(processUploadQueue, 1000);
 	var meta = file.meta;
 	meta.html.className = 'current';
 	if(meta.html.scrollIntoViewIfNeeded){
@@ -69,6 +63,9 @@ function processUploadQueue(){
 	}
 	Metadata(file);
 }
+
+processUploadQueue();
+
 function finalizeUpload(file){
 	updateProgress(1);
 	

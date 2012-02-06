@@ -72,10 +72,10 @@
 				font-weight: bold;
 				color: black;
 			}
-			input[type=file] {
+			.button {
 				font-size: xx-large;
 				color: white;
-				width: 250px;
+				width: 230px;
 			}
 
 			#login a {
@@ -134,14 +134,20 @@
 				<p>
 					This is a simple uploader for <a target=_blank href="https://music.google.com/music/listen">Google Music</a> built by <a target=_blank href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a target=_blank href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
 				</p>
-				<br><br>
 				<div id="uploader" style='display:none'>
-					<p style="float:right">
-						or <b>drag</b> files here.
+					<br>
+					<br>
+					<p  style="float:right;width:210px;overflow:hidden;white-space:nowrap" id="carousel">
+						<span style="text-align:right;width: 210px;display:inline-block">or <b>drag</b> files here</span>
+
+						<span style="text-align:right;width: 210px;display:inline-block">hold <b>shift</b> for folder</span>
 					</p>
-					<input type="file" id="upload" webkitdirectory multiple>
+					<input class='button' type="file" id="upload" multiple>
+					<!--<input class='button' type="button" id="folders" value="Choose Folder" style='color:black;display:none'>-->
 				</div>
 				<div id="login" style='display:none'>
+					<br>
+					<br>
 					<a href="https://accounts.google.com/ServiceLogin?service=sj&continue=http://music.google.com/music/listen" target=_blank>Click here to <b>Login</b> to <b>Google Music</b> first</a>
 				</div>
 			</div>
