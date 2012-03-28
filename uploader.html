@@ -83,6 +83,10 @@
 				font-weight: normal;
 				
 			}
+			#uploader {
+				 -webkit-transition: opacity 1s ease-in-out;
+				 opacity: 0;
+			}
 
 			#login {
 				background-color: #EBD0A2;
@@ -108,6 +112,10 @@
 				font-weight: normal;
 			}
 
+			#upload[webkitdirectory] {
+				background-color: gray;
+			}
+
 			#left ::-webkit-scrollbar{width:9px;height:9px;}
 			#left ::-webkit-scrollbar-button:start:decrement,#left ::-webkit-scrollbar-button:end:increment{display:block;height:0;background-color:transparent;}
 			#left ::-webkit-scrollbar-track-piece{background-color:transparent;-webkit-border-radius:0;-webkit-border-bottom-right-radius:8px;-webkit-border-bottom-left-radius:8px;}
@@ -129,12 +137,12 @@
 		</div>
 		<div id="center">
 			<div id="inner">
-				<h1 style="float:right">v<span style="color:gray">2.0</span></h1>
+				<h1 style="float:right">v<span style="color:gray">2.1</span></h1>
 				<h1>Music<span style="color:gray">Alpha</span></h1>
 				<p>
-					This is a simple uploader for <a target=_blank href="https://music.google.com/music/listen">Google Music</a> built by <a target=_blank href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a target=_blank href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
+					This is a simple uploader for <a target=_blank href="https://play.google.com/music/listen">Google Play</a> built by <a target=_blank href="http://twitter.com/antimatter15">@antimatter15</a>, made possible by <a target=_blank href="http://github.com/antimatter15/google-music-protocol">reverse engineering</a> the official desktop uploader.
 				</p>
-				<div id="uploader" style='display:none'>
+				<div id="uploader" style='display:none;opacity:0'>
 					<br>
 					<br>
 					<p  style="float:right;width:210px;overflow:hidden;white-space:nowrap" id="carousel">
@@ -148,7 +156,7 @@
 				<div id="login" style='display:none'>
 					<br>
 					<br>
-					<a href="https://accounts.google.com/ServiceLogin?service=sj&continue=http://music.google.com/music/listen" target=_blank>Click here to <b>Login</b> to <b>Google Music</b> first</a>
+					<a href="https://accounts.google.com/ServiceLogin?service=sj&continue=http://play.google.com/music/listen" target=_blank>Click here to <b>Login</b> to <b>Google Music</b> first</a>
 				</div>
 			</div>
 		</div>

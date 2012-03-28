@@ -264,7 +264,7 @@ var MAC = '13:32:42:'+SHA1("musicalpha").replace(/(..)/g,'$1:').slice(0, 8); //p
 function checkLogin(){
 	if(SID) return;
 	chrome.cookies.get({
-		url: 'http://music.google.com/music',
+		url: 'http://play.google.com/music',
 		name:'SID'
 	}, function(info){
 		if(!info){
@@ -272,10 +272,12 @@ function checkLogin(){
 			document.getElementById('uploader').style.display = 'none'
 			document.addEventListener("webkitvisibilitychange", checkLogin, false);
 		}else{
-			document.getElementById('uploader').style.display = ''
-			document.getElementById('login').style.display = 'none'
 			SID = info.value;
+			document.getElementById('uploader').style.display = '';
+			document.getElementById('login').style.display = 'none';
 			UploadAuth(function(){
+				document.getElementById('uploader').style.opacity = '1';
+				
 				ClientState(function(quota){
 					updatePolar((quota.totalTracks + quota.availableTracks) / quota.maximumTracks, 1)
 				})
