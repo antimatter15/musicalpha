@@ -1,6 +1,6 @@
 {
   "name": "MusicAlpha",
-  "version": "2.1",
+  "version": "2.2",
   "description": "Upload songs to Google Music.",
   "permissions": [
   	"cookies", 

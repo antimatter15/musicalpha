@@ -94,6 +94,15 @@ function protopost(path, proto, resp, callback){
 	xhr.onload = function(){
 		//console.log(xhr.response)
 		var array = new Uint8Array(xhr.response);
+		if(array.length > 140){
+			var str = [].slice.call(array,0).map(function(e){
+				return String.fromCharCode(e)
+			}).join('');
+			if(/Error 403/.test(str) && /^\<\!DOCTYPE/i.test(str)){
+				callback(null);
+				return;
+			}
+		}
 		//console.log(array);
 		resp.ParseFromArray([].slice.call(array,0));
 		callback(resp);
@@ -102,11 +111,11 @@ function protopost(path, proto, resp, callback){
 
 function UploadAuth(callback){
 	var uauth = new SkyJam.UploadAuth();
-	uauth.hostname = "musicalpha";
+	uauth.hostname = HostName;
 	uauth.address = MAC;
 	protopost('upauth', uauth, new SkyJam.UploadAuthResponse(), function(e){
 		//console.log(e);
-		callback();
+		callback(e);
 	})
 }
 
@@ -114,6 +123,9 @@ function ClientState(callback){
 	var cstate = new SkyJam.ClientState();
 	cstate.address = MAC;
 	protopost('clientstate', cstate, new SkyJam.ClientStateResponse(), function(e){
+		if(!e){
+			alert("Error retrieving current client state.");
+		}
 		var quota = e.quota;
 		console.log(quota.totalTracks, quota.maximumTracks);
 		callback(quota)
@@ -256,9 +268,13 @@ function UploadFile(file, params){
 
 
 var SID = '';
-//if(!localStorage.uuid) localStorage.uuid = "musicalpha-"+Math.random();
 
-var MAC = '13:32:42:'+SHA1("musicalpha").replace(/(..)/g,'$1:').slice(0, 8); //pseudo-MAC;
+if(!localStorage.uuid){
+	var d = new Date();
+	localStorage.uuid = "MusicAlpha-"+Math.floor(1000000000*Math.random());
+}
+var HostName = localStorage.uuid;
+var MAC = '13:32:42:'+SHA1(localStorage.uuid).replace(/(..)/g,'$1:').slice(0, 8); //pseudo-MAC;
 
 
 function checkLogin(){
@@ -275,12 +291,16 @@ function checkLogin(){
 			SID = info.value;
 			document.getElementById('uploader').style.display = '';
 			document.getElementById('login').style.display = 'none';
-			UploadAuth(function(){
-				document.getElementById('uploader').style.opacity = '1';
-				
-				ClientState(function(quota){
-					updatePolar((quota.totalTracks + quota.availableTracks) / quota.maximumTracks, 1)
-				})
+			UploadAuth(function(e){
+				if(e){
+					document.getElementById('uploader').style.opacity = '1';
+					
+					ClientState(function(quota){
+						updatePolar((quota.totalTracks + quota.availableTracks) / quota.maximumTracks, 1)
+					})
+				}else{
+					alert("Error trying to authenticate uploader.")
+				}
 			})
 		}
 	})
